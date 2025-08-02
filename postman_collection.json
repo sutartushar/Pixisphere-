@@ -1,0 +1,360 @@
+{
+  "info": {
+    "name": "Pixisphere API",
+    "description": "AI-powered photography service marketplace API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"client\",\n  \"profile\": {\n    \"firstName\": \"Test\",\n    \"lastName\": \"User\",\n    \"phone\": \"9876543210\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/signup",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "signup"]
+            }
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/verify-otp",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify-otp"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"client@example.com\",\n  \"password\": \"client123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "if (pm.response.code === 200) {",
+                    "    const response = pm.response.json();",
+                    "    pm.collectionVariables.set('auth_token', response.data.token);",
+                    "}"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Client",
+      "item": [
+        {
+          "name": "Search Partners",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/client/partners?category=wedding&city=Mumbai&page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["client", "partners"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "wedding"
+                },
+                {
+                  "key": "city",
+                  "value": "Mumbai"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Partner Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/client/partners/{{partner_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["client", "partners", "{{partner_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Client Inquiries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/client/inquiries",
+              "host": ["{{base_url}}"],
+              "path": ["client", "inquiries"]
+            }
+          }
+        },
+        {
+          "name": "Client Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/client/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["client", "dashboard"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inquiry",
+      "item": [
+        {
+          "name": "Create Inquiry",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"wedding\",\n  \"eventDetails\": {\n    \"eventDate\": \"2024-06-15\",\n    \"eventTime\": \"18:00\",\n    \"duration\": 8,\n    \"guestCount\": 150\n  },\n  \"budget\": {\n    \"min\": 30000,\n    \"max\": 80000\n  },\n  \"location\": {\n    \"city\": \"Mumbai\",\n    \"state\": \"Maharashtra\",\n    \"venue\": \"Grand Ballroom, Hotel Taj\"\n  },\n  \"requirements\": \"Looking for a professional wedding photographer\",\n  \"referenceImages\": [\n    \"https://example.com/image1.jpg\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/inquiry",
+              "host": ["{{base_url}}"],
+              "path": ["inquiry"]
+            }
+          }
+        },
+        {
+          "name": "Get Inquiry",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/inquiry/{{inquiry_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["inquiry", "{{inquiry_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Partner",
+      "item": [
+        {
+          "name": "Create Partner Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessInfo\": {\n    \"businessName\": \"Amazing Photography\",\n    \"description\": \"Professional photography services\",\n    \"categories\": [\"wedding\", \"portrait\"],\n    \"experience\": 5,\n    \"priceRange\": {\n      \"min\": 15000,\n      \"max\": 60000\n    }\n  },\n  \"location\": {\n    \"city\": \"Mumbai\",\n    \"state\": \"Maharashtra\",\n    \"pincode\": \"400001\",\n    \"address\": \"123 Photography Street\"\n  },\n  \"documents\": {\n    \"aadharNumber\": \"123456789012\",\n    \"panNumber\": \"ABCDE1234F\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/partner/profile",
+              "host": ["{{base_url}}"],
+              "path": ["partner", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Get Partner Leads",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/partner/leads",
+              "host": ["{{base_url}}"],
+              "path": ["partner", "leads"]
+            }
+          }
+        },
+        {
+          "name": "Add Portfolio Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Wedding Collection\",\n  \"description\": \"Beautiful wedding photography\",\n  \"category\": \"wedding\",\n  \"images\": [\n    {\n      \"url\": \"https://example.com/image1.jpg\",\n      \"caption\": \"Bride and Groom\",\n      \"index\": 0\n    }\n  ],\n  \"tags\": [\"wedding\", \"portrait\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/partner/portfolio",
+              "host": ["{{base_url}}"],
+              "path": ["partner", "portfolio"]
+            }
+          }
+        },
+        {
+          "name": "Partner Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/partner/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["partner", "dashboard"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Admin Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "Get Verifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/verifications?status=pending",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "verifications"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Verify Partner",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"verified\",\n  \"comment\": \"All documents verified successfully\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/verify/{{partner_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "verify", "{{partner_id}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
